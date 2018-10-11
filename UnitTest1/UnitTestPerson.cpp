@@ -110,6 +110,7 @@ namespace UnitTestPerson
 
 			Assert::IsTrue(father_1 == father_2);
 			Assert::IsFalse(father_1 == mother);
+			//Assert::AreEqual(father_1, father_2);
 		}
 		TEST_METHOD(TestPersonClassLessThan) {
 			std::string fathers_name{ "Jose Kurian" };

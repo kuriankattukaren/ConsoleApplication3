@@ -154,4 +154,14 @@ namespace UnitTestDates
 			auto sorted_month = datesCollection[0].month();
 		}
 	};
+	TEST_CLASS(UnitTestDatesToString) {
+		public:
+			TEST_METHOD(TestDatesToString) {
+				dates::date date_to_test{ 1, dates::month::December, 1979 };
+				string expected{ "1 December 1979" };
+				auto returned_string{ dates::toString(date_to_test) };
+				Logger::WriteMessage(returned_string.c_str());
+				Assert::AreEqual(expected, dates::toString(date_to_test));
+			}
+	};
 }

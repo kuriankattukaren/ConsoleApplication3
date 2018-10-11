@@ -151,12 +151,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\DateTime\include\date\date.h" />
+    <ClInclude Include="action.h" />
     <ClInclude Include="dates.h" />
     <ClInclude Include="person.h" />
     <ClInclude Include="testingfile.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="action.cpp" />
     <ClCompile Include="ConsoleApplication3.cpp" />
     <ClCompile Include="dates.cpp" />
     <ClCompile Include="pch.cpp">

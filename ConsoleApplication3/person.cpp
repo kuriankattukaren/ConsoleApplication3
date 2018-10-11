@@ -20,6 +20,9 @@ string remove_trailing_whitespace(string name) {
 	else return name;
 }
 
+
+
+
 vector<string> splitname(string name) {
 	/*
 	Splits a fullname containing both a first name and a second name into two names.
@@ -54,7 +57,11 @@ person::person(string name) {
 		_first_name = names[0];
 	}
 	else throw invalid_argument("Should have two names.");
-};
+}
+person::person(const person & other){
+	_first_name = other._first_name;
+	_second_name = other._second_name;
+}
 
 string person::name() {
 	string fullname = _first_name + " " + _second_name;
@@ -69,12 +76,20 @@ string person::secondName() {
 	return _second_name;
 }
 
+person person::operator=(person other){
+	_first_name = other.firstName();
+	_second_name = other.secondName();
+	return *this;
+}
+
+/*
 bool person::operator==(person name) {
 	if (name.firstName() == _first_name && name.secondName() == _second_name)
 		return true;
 	else
 		return false;
 }
+*/
 
 bool person::operator<=(person name) {
 	if ( _first_name <= name.firstName())
@@ -112,6 +127,14 @@ bool person::operator>(person name) {
 		else
 			return false;
 		}
+	else
+		return false;
+}
+
+bool operator==(person & lhs, person & rhs)
+{
+	if (lhs.firstName() == rhs.firstName() && (lhs.secondName() == rhs.secondName()))
+		return true;
 	else
 		return false;
 }
