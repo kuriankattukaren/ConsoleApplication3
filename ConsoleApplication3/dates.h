@@ -20,11 +20,6 @@ public:
 	unsigned int year() const;
 
 	date operator=(date arg);
-//	bool operator==(date arg);
-//	bool operator<=(date arg);
-	bool operator>=(date arg);
-	bool operator<(date arg);
-	bool operator>(date arg);
 
 private:
 	unsigned int _day;
@@ -33,7 +28,10 @@ private:
 };
 
 bool operator == (date& lhs, date& rhs);
-bool 
+bool operator <= (date& lhs, date& rhs);
+bool operator >= (date& lhs, date& rhs);
+bool operator <  (date& lhs, date& rhs);
+bool operator >  (date& lhs, date& rhs);
 
 bool is_leap_year(unsigned int year);
 unsigned int days_in_month(dates::month month_name, unsigned int year);

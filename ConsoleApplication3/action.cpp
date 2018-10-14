@@ -46,13 +46,17 @@ dates::date today() {
 
 //Comparison functions:can we generalise it?
 bool compare_due_dates(const Action & lhs, const Action & rhs){
-	if (lhs.dueDate() < rhs.dueDate())
+	auto lhs_date = lhs.dueDate();
+	auto rhs_date = rhs.dueDate();
+	if (lhs_date < rhs_date)
 		return true;
 	else
 		return false;
 }
 bool compare_start_dates(const Action & lhs, const Action & rhs){
-	if (lhs.startDate() < rhs.startDate())
+	auto lhs_date = lhs.dueDate();
+	auto rhs_date = rhs.dueDate();
+	if (lhs_date < rhs_date)
 		return true;
 	else
 		return false;
