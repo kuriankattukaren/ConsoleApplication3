@@ -6,41 +6,39 @@
 
 using namespace std;
 
-
-
-dates::date::date(unsigned int day, dates::month month_name, unsigned int year) {
+dates::date::date(int day, dates::month month_name, int year) {
 	if (day > days_in_month(month_name, year))
 		throw invalid_argument("Invalid day of month");
+	if (day <= 0)
+		throw invalid_argument("Day cannot be negative. Expected range is [1:31]");
+	if (year < 0)
+		throw invalid_argument("Year cannot be negative. Year should be > 1900");
 
 	_day = day;
 	_month_name = month_name;
 	_year = year;
 }
-dates::date::date(const date & other){
-	_day = other.day();
-	_month_name = other.month();
-	_year = other.year();
-}
-dates::date::date(){
-}
-
-void dates::date::changeDate(unsigned int day, dates::month month_name, unsigned int year) {
-	if (day <= 0 || day > days_in_month(month_name, year))
-		throw invalid_argument("Invalid day of month");
-
-	_day = day;
-	_month_name = month_name;
-	_year = year;
-}
-unsigned int dates::date::day()const {
+int dates::date::day()const 
+{
 	return _day;
 }
-dates::month dates::date::month()const {
+dates::month dates::date::month()const 
+{
 	return _month_name;
 }
-unsigned int dates::date::year()const
+int dates::date::year()const
 {
 	return _year;
+}
+void dates::date::changeDate(int day, dates::month month_name, int year) {
+	if (day <= 0 || day > days_in_month(month_name, year))
+		throw invalid_argument("Invalid day of month");
+	if (year < 1900)
+		throw invalid_argument("Invalid year.");
+
+	_day = day;
+	_month_name = month_name;
+	_year = year;
 }
 
 dates::date dates::date::operator=(dates::date arg)
@@ -50,7 +48,6 @@ dates::date dates::date::operator=(dates::date arg)
 	_year = arg.year();
 	return *this;
 }
-
 bool dates::operator == (date& lhs, date& rhs)
 {
 	if (lhs.day() == rhs.day() && 
@@ -113,7 +110,7 @@ bool dates::operator>(date& lhs, date& rhs)
 	}
 }
 
-bool dates::is_leap_year(unsigned int year) {
+bool dates::is_leap_year(int year) {
 	/*
 	  Checks whether year is a leap year.
 	*/
@@ -128,7 +125,7 @@ bool dates::is_leap_year(unsigned int year) {
 	else
 		return false;
 }
-unsigned int dates::days_in_month(dates::month month_name, unsigned int year) {
+int dates::days_in_month(dates::month month_name, int year) {
 	/*
 	  Returns maximum days in month.
 	 */
@@ -145,15 +142,9 @@ unsigned int dates::days_in_month(dates::month month_name, unsigned int year) {
 		if (is_leap_year(year)) return 29;
 		else return 28;
 }
-string dates::toString(dates::date & date_value) {
-	/*
-	 Converts dates::date to string formatted as "1 December 1979"
-	*/
-	auto day = date_value.day();
-	auto year = date_value.year();
-	auto month = date_value.month();
+string month_to_string(dates::month month)
+{
 	string month_name;
-
 	switch (month) {
 	case(dates::month::January):
 		month_name = "January";
@@ -180,6 +171,18 @@ string dates::toString(dates::date & date_value) {
 	case(dates::month::December):
 		month_name = "December";
 	}
+	return month_name;
+}
+string dates::toString(dates::date & date_value) {
+	/*
+	 Converts dates::date to string formatted as "1 December 1979"
+	*/
+	auto day = date_value.day();
+	auto year = date_value.year();
+	auto month = date_value.month();
+
+	string month_name{month_to_string(month)};
+	
 	auto day_string = std::to_string(day);
 	auto year_string = std::to_string(year);
 	string date_string{ day_string + " " + month_name + " " + year_string };

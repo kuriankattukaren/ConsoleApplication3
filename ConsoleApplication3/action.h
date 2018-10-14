@@ -7,12 +7,12 @@ enum class status{notstarted, hold, ongoing, completed};
 enum class priority{Low, Medium, High};
 
 class Action {
-	//bool _due;
 	string _desc;
 	person _owner;
 	status _currentStatus;
 	priority _priority;
 	dates::date _dueDate, _startDate, _today;
+	//unique_ptr<dates::date> temp{ nullptr };
 
 public:
 	Action(string act, dates::date& start_date, dates::date& due_date, person owner);
@@ -40,7 +40,7 @@ public:
 };
 
 dates::date today();
-dates::month month_from_int(unsigned int mon);
+dates::month month_from_int(int mon);
 
 bool compare_due_dates(const Action& lhs, const Action& rhs);
 bool compare_start_dates(const Action& lhs, const Action& rhs);

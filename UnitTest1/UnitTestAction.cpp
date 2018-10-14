@@ -97,7 +97,7 @@ namespace UnitTestAction
 		auto month = month_from_int(localtime->tm_mon + 1); //[0, 11] is the month index
 		auto year = localtime->tm_year + 1900;				//1900 is the reference
 
-		dates::date date_val{ static_cast<unsigned int>(day_of_month), month, static_cast<unsigned int>(year) };
+		dates::date date_val{day_of_month, month, year};
 		return date_val;
 	}
 
