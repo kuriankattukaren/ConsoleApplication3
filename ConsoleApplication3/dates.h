@@ -5,9 +5,10 @@ namespace dates{
 
 enum class month {
 	January=1, February, March, April,
-	May, June, July, August,
-	September, October, November, December
+		May, June, July, August,
+			September, October, November, December
 	};
+
 class date {
 public:
 	date(unsigned int day, month month_name, unsigned int year);
@@ -19,8 +20,8 @@ public:
 	unsigned int year() const;
 
 	date operator=(date arg);
-	bool operator==(date arg);
-	bool operator<=(date arg);
+//	bool operator==(date arg);
+//	bool operator<=(date arg);
 	bool operator>=(date arg);
 	bool operator<(date arg);
 	bool operator>(date arg);
@@ -30,6 +31,9 @@ private:
 	dates::month _month_name; 
 	unsigned int _year;
 };
+
+bool operator == (date& lhs, date& rhs);
+bool 
 
 bool is_leap_year(unsigned int year);
 unsigned int days_in_month(dates::month month_name, unsigned int year);

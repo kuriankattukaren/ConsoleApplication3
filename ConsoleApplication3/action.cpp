@@ -77,7 +77,9 @@ bool compare_priority(const Action & lhs, const Action & rhs){
 	}
 	}
 bool compare_owners(const Action & lhs, const Action & rhs){
-	if (lhs.owner() < rhs.owner())
+	auto lhs_person = lhs.owner();
+	auto rhs_person = rhs.owner();
+	if (lhs_person < rhs_person)
 		return true;
 	else
 		return false;

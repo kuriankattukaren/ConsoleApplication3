@@ -41,7 +41,7 @@ namespace UnitTestPerson
 			Assert::AreEqual(first_name, std::string(results[0]));
 			Assert::AreEqual(second_name, std::string(results[1]));
 		}
-		TEST_METHOD(TestPersonClassValidInit) {
+		TEST_METHOD(TestClassValidInit) {
 			//Expected Input
 			std::string mothers_name{ "Rosamma Joseph" };
 			std::string mothers_first_name{ "Rosamma" };
@@ -74,7 +74,7 @@ namespace UnitTestPerson
 				Assert::Fail(message);
 			}
 		}
-		TEST_METHOD(TestPersonInitNameWithLeadingTrailingSpaces) {
+		TEST_METHOD(TestInitNameWithLeadingTrailingSpaces) {
 			//Tests names with leading and trailing whitespaces.
 			std::string sister_name{ "    Rosen    Joseph    " };
 			std::string expected_name{ "Rosen Joseph" };
@@ -86,7 +86,7 @@ namespace UnitTestPerson
 			Assert::AreEqual(sister_first_name, sister.firstName());
 			Assert::AreEqual(sister_second_name, sister.secondName());
 		}
-		TEST_METHOD(TestPersonInvalidName) {
+		TEST_METHOD(TestInvalidName) {
 			//Tests when only single name is provided
 			const wchar_t* message = L"Did not raise invalid_argument exception.";
 
@@ -99,7 +99,7 @@ namespace UnitTestPerson
 				Assert::Fail(message);
 			}
 		}
-		TEST_METHOD(TestPersonClassEquality) {
+		TEST_METHOD(TestClassEquality) {
 			std::string fathers_name_1{ "Jose Kurian" };
 			std::string fathers_name_2{ "Jose Kurian" };
 			std::string mothers_name{ "Rosamma Joseph" };
@@ -112,7 +112,7 @@ namespace UnitTestPerson
 			Assert::IsFalse(father_1 == mother);
 			//Assert::AreEqual(father_1, father_2);
 		}
-		TEST_METHOD(TestPersonClassLessThan) {
+		TEST_METHOD(TestClassLessThan) {
 			std::string fathers_name{ "Jose Kurian" };
 			std::string mothers_name{ "Rosamma Joseph" };
 
@@ -123,7 +123,7 @@ namespace UnitTestPerson
 			Assert::IsFalse(mother < father);
 			Assert::IsFalse(father < father);
 		}
-		TEST_METHOD(TestPersonClassLessThanEqual){
+		TEST_METHOD(TestClassLessThanEqual){
 			std::string fathers_name{ "Jose Kurian" };
 			std::string mothers_name{ "Rosamma Joseph" };
 
@@ -134,7 +134,7 @@ namespace UnitTestPerson
 			Assert::IsFalse(mother <= father);
 			Assert::IsTrue(father <= father);
 			}
-		TEST_METHOD(TestPersonClassGreaterThan) {
+		TEST_METHOD(TestClassGreaterThan) {
 			std::string fathers_name{ "Jose Kurian" };
 			std::string mothers_name{ "Rosamma Joseph" };
 
@@ -145,7 +145,7 @@ namespace UnitTestPerson
 			Assert::IsFalse(father > mother);
 			Assert::IsFalse(father > father);
 		}
-		TEST_METHOD(TestPersonClassGreatherThanEqual) {
+		TEST_METHOD(TestClassGreatherThanEqual) {
 			std::string fathers_name{ "Jose Kurian" };
 			std::string mothers_name{ "Rosamma Joseph" };
 
@@ -154,6 +154,31 @@ namespace UnitTestPerson
 
 			Assert::IsTrue(mother >= father);
 			Assert::IsFalse(father >= mother);
+		}
+		TEST_METHOD(TestClassLessThanEqualSecondName) {
+			std::string fathers_name{ "Jose Kurian" };
+			std::string brothers_name{ "Jose Aby" };
+
+			auto father = person(fathers_name);
+			auto brother = person(brothers_name);
+
+			Assert::IsTrue(brother <= father);
+			Assert::IsFalse(father <= brother);
+			Assert::IsTrue(father <= father);
+		}
+		TEST_METHOD(TestClassGreaterThanEqualWithSameName) {
+			std::string first_name{ "Jose Kurian" };
+			std::string second_name{ "Jose Kurian" };
+
+			auto first = person(first_name);
+			auto second = person(second_name);
+
+			Assert::IsTrue(first >= second);
+		}
+		TEST_METHOD(TestCopyAssignment) {
+			auto originator = person{ "Donald Trump" };
+			auto duplicate = originator;
+			Assert::IsTrue(duplicate == originator);
 		}
 	};
 }

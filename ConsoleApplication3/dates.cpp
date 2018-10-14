@@ -128,12 +128,13 @@ dates::date dates::date::operator=(dates::date arg)
 	return *this;
 }
 
+/*
 bool dates::date::operator==(date arg) {
 	if (_day == arg.day() && _month_name == arg.month() && _year == arg.year())
 		return true;
 	else
 		return false;
-}
+}*/
 
 bool dates::date::operator<=(date arg) {
 	if (_year < arg.year())
@@ -205,4 +206,12 @@ bool dates::date::operator>(date arg) {
 		return true;
 	else
 		return false;	// dates are equal
+}
+
+bool dates::operator==(date& lhs, date& rhs)
+{
+	if (lhs.day() == rhs.day() && 
+		lhs.month() == rhs.month() && 
+		lhs.year() == rhs.year()) return true;
+	else return false;
 }
