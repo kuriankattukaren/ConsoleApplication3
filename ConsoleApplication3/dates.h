@@ -27,11 +27,11 @@ private:
 	int _year;
 };
 
-bool operator == (date& lhs, date& rhs);
-bool operator <= (date& lhs, date& rhs);
-bool operator >= (date& lhs, date& rhs);
-bool operator <  (date& lhs, date& rhs);
-bool operator >  (date& lhs, date& rhs);
+bool operator == (const date& lhs, const date& rhs);
+bool operator <= (const date& lhs, const date& rhs);
+bool operator >= (const date& lhs, const date& rhs);
+bool operator <  (const date& lhs, const date& rhs);
+bool operator >  (const date& lhs, const date& rhs);
 
 bool is_leap_year(int year);
 int days_in_month(dates::month month_name, int year);

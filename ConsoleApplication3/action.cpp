@@ -64,21 +64,11 @@ dates::date today() {
 //Comparison functions.
 bool compare_due_dates(const Action & lhs, const Action & rhs)
 {
-	auto lhs_date = lhs.dueDate();
-	auto rhs_date = rhs.dueDate();
-	if (lhs_date < rhs_date)
-		return true;
-	else
-		return false;
+	return lhs.dueDate() < rhs.dueDate();
 }
 bool compare_start_dates(const Action & lhs, const Action & rhs)
 {
-	auto lhs_date = lhs.dueDate();
-	auto rhs_date = rhs.dueDate();
-	if (lhs_date < rhs_date)
-		return true;
-	else
-		return false;
+	return lhs.startDate() < rhs.startDate();
 }
 bool compare_priority(const Action & lhs, const Action & rhs)
 {
@@ -92,24 +82,18 @@ bool compare_priority(const Action & lhs, const Action & rhs)
 }
 bool compare_owners(const Action & lhs, const Action & rhs)
 {
-	if (lhs.owner() < rhs.owner())
-		return true;
-	else
-		return false;
+	return lhs.owner() < rhs.owner();
 }
 bool compare_descriptions(const Action & lhs, const Action & rhs)
 {
-	if (lhs.description() < rhs.description())
-		return true;
-	else
-		return false;
+	return lhs.description() < rhs.description();
 }
 bool compare_status(const Action & lhs, const Action & rhs)
 {
 	auto lhs_status = lhs.actionStatus();
 	auto rhs_status = rhs.actionStatus();
 
-	if (lhs.actionStatus() == rhs.actionStatus()) return false;
+	if (lhs_status == rhs_status) return false;
 	else if (lhs_status == status::notstarted) return true;
 	else if (lhs_status == status::hold) {
 		if (rhs_status == status::notstarted) return false;

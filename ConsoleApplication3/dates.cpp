@@ -54,14 +54,14 @@ dates::date dates::date::operator=(dates::date arg)
 	_year = arg.year();
 	return *this;
 }
-bool dates::operator == (date& lhs, date& rhs)
+bool dates::operator == (const date& lhs, const date& rhs)
 {
 	if (lhs.day() == rhs.day() && 
 		lhs.month() == rhs.month() && 
 		lhs.year() == rhs.year()) return true;
 	else return false;
 }
-bool dates::operator <= (date& lhs, date& rhs) 
+bool dates::operator <= (const date& lhs, const date& rhs) 
 {
 	if (lhs.year() < rhs.year()) return true;
 	if (lhs.year() > rhs.year()) return false;
@@ -73,7 +73,7 @@ bool dates::operator <= (date& lhs, date& rhs)
 			if (lhs.day() > rhs.day()) return false;
 	else return true;	// dates are equal
 }
-bool dates::operator >= (date& lhs, date& rhs) 
+bool dates::operator >= (const date& lhs, const date& rhs) 
 {
 	if (lhs.year() < rhs.year()) return false;
 	if (lhs.year() > rhs.year()) return true;
@@ -87,7 +87,7 @@ bool dates::operator >= (date& lhs, date& rhs)
 		}
 	}
 }
-bool dates::operator < (date& lhs, date& rhs) 
+bool dates::operator < (const date& lhs, const date& rhs) 
 {
 	if (lhs.year() < rhs.year()) return true;
 	else if (lhs.year() > rhs.year()) return false;
@@ -101,7 +101,7 @@ bool dates::operator < (date& lhs, date& rhs)
 		}
 	}
 }
-bool dates::operator>(date& lhs, date& rhs) 
+bool dates::operator>(const date& lhs, const date& rhs) 
 {
 	if (lhs.year() < rhs.year()) return false;
 	else if (lhs.year() > rhs.year()) return true;
