@@ -55,7 +55,7 @@ bool operator <= (const person& lhs,  const person& rhs)
 	else
 		return false;
 }
-bool operator >= ( const person& lhs, const person& rhs)
+bool operator >= (const person& lhs,  const person& rhs)
 {
 	if (lhs.firstName() > rhs.firstName()) return true;
 	else if (lhs.firstName() == rhs.firstName()) {
@@ -65,7 +65,7 @@ bool operator >= ( const person& lhs, const person& rhs)
 		}
 	else return false;
 }
-bool operator <  ( const person& lhs, const person& rhs)
+bool operator <  (const person& lhs,  const person& rhs)
 {
 	if (lhs.firstName() < rhs.firstName()) return true;
 	else if (lhs.firstName() == rhs.firstName()) {
@@ -74,7 +74,7 @@ bool operator <  ( const person& lhs, const person& rhs)
 	}
 	else return false;
 }
-bool operator >  ( const person& lhs, const person& rhs)
+bool operator >  (const person& lhs,  const person& rhs)
 {
 	if (lhs.firstName() > rhs.firstName()) return true;
 	else if (lhs.firstName() == rhs.firstName()) {
