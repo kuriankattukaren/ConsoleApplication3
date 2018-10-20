@@ -4,6 +4,8 @@
 #include <chrono>
 #include <ctime>
 #include "../../DateTime/include/date/date.h"
+#include "../../DateTime/include/date/tz.h"
+
 
 dates::month month_from_int(int mon) {
 	if (mon < 1 || mon > 12) {
@@ -41,16 +43,27 @@ dates::month month_from_int(int mon) {
 	}
 }
 dates::date today() {
-	date::year_month_day today = date::year_month_day{ date::floor<date::days>(chrono::system_clock::now())};
-	auto day = static_cast<unsigned int>(today.day());
-	auto month_integer = static_cast<unsigned int>(today.month());
-	auto month = month_from_int(month_integer);
-	auto year = int(today.year());
-	return dates::date(day, month, year);
+		/*Local time should be used and not system time. System time is GMT
+		  time and GMT can lag behind local time. If the program is executed 
+		  in Australia, if system time is used there will be a delay in 
+		  detecting due date as system time is GMT time which is behind local 
+		  Australia time.
+		 */
+		auto rt = date::make_zoned(date::current_zone()->name(), std::chrono::system_clock::now());
+		auto localtime = rt.get_local_time();
+		
+		date::year_month_day today = date::year_month_day{ date::floor<date::days>(localtime) };
+		auto day = static_cast<int>(static_cast<unsigned int>(today.day()));
+		auto month_integer = static_cast<int>(static_cast<unsigned int>(today.month()));
+		auto month = month_from_int(month_integer);
+		auto year = int(today.year());
+		return dates::date{ day, month, year };
+	
 }
 
 //Comparison functions.
-bool compare_due_dates(const Action & lhs, const Action & rhs){
+bool compare_due_dates(const Action & lhs, const Action & rhs)
+{
 	auto lhs_date = lhs.dueDate();
 	auto rhs_date = rhs.dueDate();
 	if (lhs_date < rhs_date)
@@ -58,7 +71,8 @@ bool compare_due_dates(const Action & lhs, const Action & rhs){
 	else
 		return false;
 }
-bool compare_start_dates(const Action & lhs, const Action & rhs){
+bool compare_start_dates(const Action & lhs, const Action & rhs)
+{
 	auto lhs_date = lhs.dueDate();
 	auto rhs_date = rhs.dueDate();
 	if (lhs_date < rhs_date)
@@ -76,25 +90,26 @@ bool compare_priority(const Action & lhs, const Action & rhs)
 	}
 	else return true; //lhs.getPriority() == priority::Low
 }
-bool compare_owners(const Action & lhs, const Action & rhs){
-	auto lhs_person = lhs.owner();
-	auto rhs_person = rhs.owner();
-	if (lhs_person < rhs_person)
+bool compare_owners(const Action & lhs, const Action & rhs)
+{
+	if (lhs.owner() < rhs.owner())
 		return true;
 	else
 		return false;
 }
-bool compare_descriptions(const Action & lhs, const Action & rhs){
+bool compare_descriptions(const Action & lhs, const Action & rhs)
+{
 	if (lhs.description() < rhs.description())
 		return true;
 	else
 		return false;
 }
-bool compare_status(const Action & lhs, const Action & rhs){
+bool compare_status(const Action & lhs, const Action & rhs)
+{
 	auto lhs_status = lhs.actionStatus();
 	auto rhs_status = rhs.actionStatus();
 
-	if (lhs_status == rhs_status) return false;
+	if (lhs.actionStatus() == rhs.actionStatus()) return false;
 	else if (lhs_status == status::notstarted) return true;
 	else if (lhs_status == status::hold) {
 		if (rhs_status == status::notstarted) return false;

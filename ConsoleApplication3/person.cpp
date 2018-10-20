@@ -6,40 +6,45 @@
 
 using namespace std;
 
-person::person(string name) {
+person::person(string name) 
+{
 	auto names = splitname(name);
-	if (names.size() == 2) {
+	if (names.size() == 2) 
+	{
 		_second_name = names[1];
 		_first_name = names[0];
 	}
 	else throw invalid_argument("Should have two names.");
 }
 
-string person::name() {
+string person::name() const 
+{
 	string fullname = _first_name + " " + _second_name;
 	return fullname;
 }
-string person::firstName() {
+string person::firstName() const 
+{
 	return _first_name;
 }
-string person::secondName() {
+string person::secondName() const 
+{
 	return _second_name;
 }
 
-person person::operator=(person& other){
+person& person::operator=(person& other){
 	_first_name = other.firstName();
 	_second_name = other.secondName();
 	return *this;
 }
 
-bool operator == (person& lhs, person& rhs)
+bool operator == (const person& lhs,  const person& rhs)
 {
 	if (lhs.firstName() == rhs.firstName() && (lhs.secondName() == rhs.secondName()))
 		return true;
 	else
 		return false;
 }
-bool operator <= (person& lhs, person& rhs) 
+bool operator <= (const person& lhs,  const person& rhs) 
 {
 	if (lhs.firstName() < rhs.firstName()) return true;
 	else if (lhs.firstName() == rhs.firstName()) {
@@ -50,7 +55,7 @@ bool operator <= (person& lhs, person& rhs)
 	else
 		return false;
 }
-bool operator >= (person& lhs, person& rhs)
+bool operator >= ( const person& lhs, const person& rhs)
 {
 	if (lhs.firstName() > rhs.firstName()) return true;
 	else if (lhs.firstName() == rhs.firstName()) {
@@ -60,7 +65,7 @@ bool operator >= (person& lhs, person& rhs)
 		}
 	else return false;
 }
-bool operator <  (person& lhs, person& rhs)
+bool operator <  ( const person& lhs, const person& rhs)
 {
 	if (lhs.firstName() < rhs.firstName()) return true;
 	else if (lhs.firstName() == rhs.firstName()) {
@@ -69,7 +74,7 @@ bool operator <  (person& lhs, person& rhs)
 	}
 	else return false;
 }
-bool operator >  (person& lhs, person& rhs)
+bool operator >  ( const person& lhs, const person& rhs)
 {
 	if (lhs.firstName() > rhs.firstName()) return true;
 	else if (lhs.firstName() == rhs.firstName()) {

@@ -6,41 +6,48 @@
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace UnitTestPerson
-{		
-	TEST_CLASS(UnitTestPerson)
+{	
+	TEST_CLASS(HelperFunctions) {
+	public:
+		TEST_METHOD(TestRemoveLeadingWhiteSpace) 
+		{
+		std::string name{ "    Kurian Kattukaren" };
+		auto edited_name{ remove_leading_whitespace(name) };
+		Assert::AreEqual(edited_name, string("Kurian Kattukaren"));
+		}
+		TEST_METHOD(TestRemoveLeadingWhiteSpaceNoLeadingWhiteSpace) 
+	{
+		std::string name{ "Kurian Kattukaren" };
+		auto edited_name{ remove_leading_whitespace(name) };
+		Assert::AreEqual(edited_name, name);
+	}
+		TEST_METHOD(TestRemoveTrailingWhiteSpace) 
+	{
+		std::string name{ "Kurian Kattukaren   " };
+		std::string expected_name{ "Kurian Kattukaren" };
+		auto edited_name{ remove_trailing_whitespace(name) };
+		Assert::AreEqual(expected_name, edited_name);
+	}
+		TEST_METHOD(TestRemoveTrailingWhiteSpaceNoTrailingWhiteSpace) 
+	{
+		std::string name{ "Kurian Kattukaren" };
+		auto edited_name{ remove_trailing_whitespace(name) };
+		Assert::AreEqual(edited_name, name);
+	}
+		TEST_METHOD(TestNameSplit)
+	{
+		std::string name{ "Kurian Kattukaren" };
+		std::string first_name{ "Kurian" };
+		std::string second_name{ "Kattukaren" };
+
+		auto results = splitname(name);
+		Assert::AreEqual(first_name, std::string(results[0]));
+		Assert::AreEqual(second_name, std::string(results[1]));
+	}
+	};
+	TEST_CLASS(Construction)
 	{
 	public:
-		TEST_METHOD(TestRemoveLeadingWhiteSpace) {
-			std::string name{ "    Kurian Kattukaren" };
-			auto edited_name{remove_leading_whitespace(name)};
-			Assert::AreEqual(edited_name, string("Kurian Kattukaren"));
-		}
-		TEST_METHOD(TestRemoveLeadingWhiteSpaceNoLeadingWhiteSpace) {
-			std::string name{ "Kurian Kattukaren" };
-			auto edited_name{remove_leading_whitespace(name)};
-			Assert::AreEqual(edited_name, name);
-		}
-		TEST_METHOD(TestRemoveTrailingWhiteSpace) {
-			std::string name{ "Kurian Kattukaren   " };
-			std::string expected_name{ "Kurian Kattukaren" };
-			auto edited_name{remove_trailing_whitespace(name)};
-			Assert::AreEqual(expected_name, edited_name);
-		}
-		TEST_METHOD(TestRemoveTrailingWhiteSpaceNoTrailingWhiteSpace) {
-			std::string name{ "Kurian Kattukaren" };
-			auto edited_name{remove_trailing_whitespace(name) };
-			Assert::AreEqual(edited_name, name);
-		}
-		TEST_METHOD(TestNameSplit)
-		{
-			std::string name{ "Kurian Kattukaren" };
-			std::string first_name{ "Kurian" };
-			std::string second_name{ "Kattukaren" };
-
-			auto results = splitname(name);
-			Assert::AreEqual(first_name, std::string(results[0]));
-			Assert::AreEqual(second_name, std::string(results[1]));
-		}
 		TEST_METHOD(TestClassValidInit) {
 			//Expected Input
 			std::string mothers_name{ "Rosamma Joseph" };
@@ -99,6 +106,22 @@ namespace UnitTestPerson
 				Assert::Fail(message);
 			}
 		}
+	};
+	TEST_CLASS(CopyOperation) 
+	{
+	public:
+		TEST_METHOD(TestCopyAssignment) {
+			auto originator = person{ "Donald Trump" };
+			auto duplicate = originator;
+			Assert::IsTrue(duplicate == originator);
+			Assert::IsTrue(duplicate.firstName() == originator.firstName());
+			Assert::IsTrue(duplicate.secondName() == originator.secondName());
+			Assert::IsTrue(duplicate.name() == originator.name());
+		}
+	};
+	TEST_CLASS(LogicalOperators) 
+	{
+	public:
 		TEST_METHOD(TestClassEquality) {
 			std::string fathers_name_1{ "Jose Kurian" };
 			std::string fathers_name_2{ "Jose Kurian" };
@@ -123,7 +146,7 @@ namespace UnitTestPerson
 			Assert::IsFalse(mother < father);
 			Assert::IsFalse(father < father);
 		}
-		TEST_METHOD(TestClassLessThanEqual){
+		TEST_METHOD(TestClassLessThanEqual) {
 			std::string fathers_name{ "Jose Kurian" };
 			std::string mothers_name{ "Rosamma Joseph" };
 
@@ -133,7 +156,7 @@ namespace UnitTestPerson
 			Assert::IsTrue(father <= mother);
 			Assert::IsFalse(mother <= father);
 			Assert::IsTrue(father <= father);
-			}
+		}
 		TEST_METHOD(TestClassGreaterThan) {
 			std::string fathers_name{ "Jose Kurian" };
 			std::string mothers_name{ "Rosamma Joseph" };

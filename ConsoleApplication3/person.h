@@ -31,22 +31,22 @@ class person {
 public:
 	person(string name);
 	
-	string name();
-	string firstName();
-	string secondName();
+	string name() const;
+	string firstName() const;
+	string secondName() const;
 
-	person operator=(person& name);
+	person& operator=(person& name);
 	
 private:
 	string _first_name;
 	string _second_name;
 };
 
-bool operator == (person& lhs, person& rhs);
-bool operator <= (person& lhs, person& rhs);
-bool operator >= (person& lhs, person& rhs);
-bool operator <  (person& lhs, person& rhs);
-bool operator >  (person& lhs, person& rhs);
+bool operator == (const person& lhs, const person& rhs);
+bool operator <= (const person& lhs, const person& rhs);
+bool operator >= (const person& lhs, const person& rhs);
+bool operator <  (const person& lhs, const person& rhs);
+bool operator >  (const person& lhs, const person& rhs);
 
 vector<string> splitname(string str);
 string remove_leading_whitespace(string name);

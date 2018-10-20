@@ -8,6 +8,7 @@
 #include <iomanip>
 
 #include "../../DateTime/include/date/date.h"
+#include "../../DateTime/include/date/tz.h"
 #include "../ConsoleApplication3/action.h"
 #include "../ConsoleApplication3/person.h"
 #include "../ConsoleApplication3/dates.h"
@@ -92,7 +93,7 @@ namespace UnitTestAction
 	dates::date date_today() {
 		char mbstr[100];
 		std::time_t t = std::time(nullptr);
-		auto localtime = std::localtime(&t);
+		auto localtime = std::gmtime(&t);
 		auto day_of_month = localtime->tm_mday;				//[1, 31]
 		auto month = month_from_int(localtime->tm_mon + 1); //[0, 11] is the month index
 		auto year = localtime->tm_year + 1900;				//1900 is the reference
@@ -121,7 +122,43 @@ public:
 		Assert::IsTrue(status::notstarted == act.actionStatus());
 		Assert::IsFalse(act.due());
 	}
+	TEST_METHOD(TestTodayGenerator)
+	{
+		std::time_t t = std::time(nullptr);
+		auto localtime = std::localtime(&t);
+		auto day_of_month = localtime->tm_mday;				//[1, 31]
+		auto month = month_from_int(localtime->tm_mon + 1); //[0, 11] is the month index
+		auto year = localtime->tm_year + 1900;				//1900 is the reference
+	
+		Logger::WriteMessage(std::to_wstring(localtime->tm_hour).c_str());
+		Logger::WriteMessage(std::to_wstring(localtime->tm_min).c_str());
+		Logger::WriteMessage(std::to_wstring(localtime->tm_sec).c_str());
+		Logger::WriteMessage(std::to_wstring(day_of_month).c_str());
+		Logger::WriteMessage(std::to_wstring(localtime->tm_mon + 1).c_str());
+		Logger::WriteMessage(std::to_wstring(localtime->tm_year + 1900).c_str());
+		
+		std::time_t gmt = std::time(nullptr);
+		auto gmttime = std::gmtime(&gmt);
+		auto gmday_of_month = gmttime->tm_mday;				//[1, 31]
+		auto gmmonth = month_from_int(gmttime->tm_mon + 1); //[0, 11] is the month index
+		auto gmyear = gmttime->tm_year + 1900;				//1900 is the reference
+		Logger::WriteMessage(std::to_wstring(gmttime->tm_hour).c_str());
+		Logger::WriteMessage(std::to_wstring(gmttime->tm_min).c_str());
+		Logger::WriteMessage(std::to_wstring(gmttime->tm_sec).c_str());
+		Logger::WriteMessage(std::to_wstring(gmday_of_month).c_str());
+		Logger::WriteMessage(std::to_wstring(gmttime->tm_mon + 1).c_str());
+		Logger::WriteMessage(std::to_wstring(gmttime->tm_year + 1900).c_str());
+
+		auto rt = date::make_zoned(date::current_zone()->name(), std::chrono::system_clock::now());
+		Logger::WriteMessage(std::to_wstring(rt.get_local_time().time_since_epoch().count()).c_str());
+	}
 	TEST_METHOD(TestToday) {
+		auto test_date = dates::toString(date_today());
+		auto computed_date = dates::toString(today());
+		string warning{ "We're in test today" };
+		Logger::WriteMessage(warning.c_str());
+		Logger::WriteMessage(test_date.c_str());
+		Logger::WriteMessage(computed_date.c_str());
 		Assert::IsTrue(date_today() == today());
 	}
 	TEST_METHOD(TestTodayComparison) {

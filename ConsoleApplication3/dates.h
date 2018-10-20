@@ -17,7 +17,8 @@ public:
 	dates::month month() const;
 	int year() const;
 	
-	void changeDate(int day, dates::month new_month, int year);
+//	void changeDate(int day, dates::month new_month, int year);
+	void changeDate(const dates::date& new_date);
 	date operator=(date arg);
 
 private:

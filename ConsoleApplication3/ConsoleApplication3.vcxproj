@@ -152,6 +152,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\DateTime\include\date\date.h" />
+    <ClInclude Include="..\..\DateTime\include\date\tz.h" />
     <ClInclude Include="action.h" />
     <ClInclude Include="dates.h" />
     <ClInclude Include="person.h" />
@@ -159,6 +160,9 @@
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\DateTime\src\tz.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="action.cpp" />
     <ClCompile Include="ConsoleApplication3.cpp" />
     <ClCompile Include="dates.cpp" />

@@ -30,6 +30,7 @@ int dates::date::year()const
 {
 	return _year;
 }
+/*
 void dates::date::changeDate(int day, dates::month month_name, int year) {
 	if (day <= 0 || day > days_in_month(month_name, year))
 		throw invalid_argument("Invalid day of month");
@@ -39,6 +40,11 @@ void dates::date::changeDate(int day, dates::month month_name, int year) {
 	_day = day;
 	_month_name = month_name;
 	_year = year;
+}
+*/
+void dates::date::changeDate(const dates::date & new_date)
+{
+	*this = new_date;
 }
 
 dates::date dates::date::operator=(dates::date arg)
@@ -146,30 +152,18 @@ string month_to_string(dates::month month)
 {
 	string month_name;
 	switch (month) {
-	case(dates::month::January):
-		month_name = "January";
-	case(dates::month::February):
-		month_name = "February";
-	case(dates::month::March):
-		month_name = "March";
-	case(dates::month::April):
-		month_name = "April";
-	case(dates::month::May):
-		month_name = "May";
-	case(dates::month::June):
-		month_name = "June";
-	case(dates::month::July):
-		month_name = "July";
-	case(dates::month::August):
-		month_name = "August";
-	case (dates::month::September):
-		month_name = "September";
-	case (dates::month::October):
-		month_name = "October";
-	case(dates::month::November):
-		month_name = "November";
-	case(dates::month::December):
-		month_name = "December";
+	case(dates::month::January): month_name = "January";  break;
+	case(dates::month::February):month_name = "February"; break;
+	case(dates::month::March):month_name = "March"; break;
+	case(dates::month::April):month_name = "April"; break;
+	case(dates::month::May):month_name = "May"; break;
+	case(dates::month::June):month_name = "June"; break;
+	case(dates::month::July):month_name = "July"; break;
+	case(dates::month::August):month_name = "August"; break;
+	case (dates::month::September): month_name = "September"; break;
+	case (dates::month::October): month_name = "October"; break;
+	case(dates::month::November):month_name = "November";break;
+	case(dates::month::December):month_name = "December";break;
 	}
 	return month_name;
 }
