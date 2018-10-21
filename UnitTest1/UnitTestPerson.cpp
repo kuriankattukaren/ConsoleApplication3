@@ -204,4 +204,6 @@ namespace UnitTestPerson
 			Assert::IsTrue(duplicate == originator);
 		}
 	};
+	TEST_CLASS(SubClassing) {
+	};
 }

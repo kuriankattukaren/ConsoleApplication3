@@ -13,7 +13,6 @@ class Action {
 	status _currentStatus;
 	priority _priority;
 	dates::date _dueDate, _startDate, _today;
-	//unique_ptr<dates::date> temp{ nullptr };
 
 public:
 	Action(string act, dates::date& start_date, dates::date& due_date, person owner);

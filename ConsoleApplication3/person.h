@@ -29,7 +29,9 @@ class person {
 	*/
 
 public:
-	person(string name);
+
+
+	person(string full_name);
 	
 	string name() const;
 	string firstName() const;

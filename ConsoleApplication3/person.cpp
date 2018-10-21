@@ -6,9 +6,9 @@
 
 using namespace std;
 
-person::person(string name) 
+person::person(string full_name) 
 {
-	auto names = splitname(name);
+	auto names = splitname(full_name);
 	if (names.size() == 2) 
 	{
 		_second_name = names[1];
