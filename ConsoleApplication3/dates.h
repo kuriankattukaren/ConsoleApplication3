@@ -19,7 +19,7 @@ public:
 	
 //	void changeDate(int day, dates::month new_month, int year);
 	void changeDate(const dates::date& new_date);
-	date operator=(date arg);
+	date operator=( date arg);
 
 private:
 	int _day;

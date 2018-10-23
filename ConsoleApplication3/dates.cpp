@@ -42,7 +42,7 @@ void dates::date::changeDate(int day, dates::month month_name, int year) {
 	_year = year;
 }
 */
-void dates::date::changeDate(const dates::date & new_date)
+void dates::date::changeDate( const dates::date& new_date)
 {
 	*this = new_date;
 }

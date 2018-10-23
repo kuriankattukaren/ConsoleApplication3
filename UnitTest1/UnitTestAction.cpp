@@ -441,4 +441,43 @@ public:
 			Assert::AreEqual({ 1 }, results.size());
 		}
 	};
+	TEST_CLASS(TestReturnedDates) {
+	public:
+		TEST_METHOD(TestReturnedCompletedDates) 
+		{
+			auto actions = generate_actions(5);
+			for (auto action : actions)
+			{
+				if (action.actionStatus() == status::completed) 
+				{
+					if (action.completedDate() == nullptr) 
+						Assert::Fail();
+				}
+				else
+				{
+					if (action.completedDate() != nullptr) 
+						Assert::Fail();	
+				}
+			}
+
+		}
+		TEST_METHOD(TestReturnedOnHoldDates)
+		{
+			auto actions = generate_actions(5);
+			for (auto action : actions)
+			{
+				if (action.actionStatus() == status::hold)
+				{
+					if (action.onHoldDate() == nullptr)
+						Assert::Fail();
+				}
+				else
+				{
+					if (action.onHoldDate() != nullptr)
+						Assert::Fail();
+				}
+			}
+
+		}
+	};
 }

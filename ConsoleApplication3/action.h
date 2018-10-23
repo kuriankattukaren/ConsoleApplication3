@@ -4,37 +4,111 @@
 #include "person.h"
 #include "../../DateTime/include/date/date.h"
 #include "../../DateTime/include/date/tz.h"
-enum class status{notstarted, hold, ongoing, completed};
-enum class priority{Low, Medium, High};
+enum class Status{notstarted, hold, ongoing, completed};
+enum class Priority{Low, Medium, High};
 
 class Action {
 	string _desc;
 	person _owner;
-	status _currentStatus;
-	priority _priority;
-	dates::date _dueDate, _startDate, _today;
-
+	Status _currentStatus;
+	Priority _priority;
+	dates::date _dueDate, _today, _identified_date;
+	shared_ptr<dates::date> _on_hold_date{ nullptr }, _date_completed{ nullptr };
+	shared_ptr<dates::date> _startDate{ nullptr };
 public:
 	Action(string act, dates::date& start_date, dates::date& due_date, person owner);
 	
-	dates::date dueDate() const;
-	void changeDueDate(dates::date new_due_date);
+	/*
+	 * Returns the date when the action was identified.
+	 */
+	dates::date date_identified() const;
+
+	/*
+	 * Changes the date identified.
+	 */
+	void set_date_identified(dates::date new_date);
+
+	/*
+	 * Returns the date the action is due.
+	 */
+	dates::date date_due() const;
+
+	/*
+	 * Changes the date the action is due.
+	 */
+	void set_date_due(dates::date new_due_date);
 	
-	dates::date startDate() const;
-	void changeStartDate(dates::date new_start_date);
+	/*
+	 * Returns the date action was started.
+	 * If action not started returns nullptr.
+	 */
+	shared_ptr<dates::date>date_started() const;
 
-	status actionStatus() const;
-	void setStatus(status new_status);
+	/*
+	 * Changes the date the action was started.
+	 */
+	void set_date_started(dates::date new_start_date);
 
+	/*
+	Returns pointer to date when action was marked completed.
+	If action is not completed a nullptr is returned.
+	*/
+	shared_ptr<dates::date> date_completed() const;
+	
+	/*
+	 Returns pointer to date when action was put on hold.
+	 If not on hold returns nullptr.
+	 */
+	shared_ptr<dates::date> date_onhold() const;
+
+	void set_date_onhold(dates::date new_date);
+
+	void set_date_completed(dates::date new_date);
+
+	/*
+	 * Returns the current status of the action.
+	 */
+	Status status() const;
+
+	/*
+	 * Changes the status.
+	 */
+	void set_status(Status new_status);
+
+	/*
+	 * Returns the action description.
+	 */
 	string description() const;
-	void changeDescription(string new_description);
 
+	/*
+	 * Changes the action description.
+	 */
+	void set_description(string new_description);
+
+	/*
+	 * Returns the owner of the action.
+	 */
 	person owner() const;
-	void changeOwner(person new_owner);
 
-	priority getPriority() const;
-	void setPriority(priority new_priority);
+	/*
+	 * Changes the owner of the action.
+	 */
+	void set_owner(person new_owner);
 
+	/*
+	 * Returns the priority of the action.
+	 */
+	Priority priority() const;
+
+	/*
+	 * Changes the priority of the action.
+	 */
+	void set_priority(Priority new_priority);
+
+	/*
+	 * Returns true if action is due. Action is due if
+	 * it's not completed and due date has already passed.
+	 */
 	bool due();
 
 };
