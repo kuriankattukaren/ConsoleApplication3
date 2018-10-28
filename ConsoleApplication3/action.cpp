@@ -64,18 +64,18 @@ dates::date today() {
 //Comparison functions.
 bool compare_due_dates(const Action & lhs, const Action & rhs)
 {
-	return lhs.dueDate() < rhs.dueDate();
+	return lhs.date_due() < rhs.date_due();
 }
-bool compare_start_dates(const Action & lhs, const Action & rhs)
+bool compare_identified_dates(const Action & lhs, const Action & rhs)
 {
-	return lhs.startDate() < rhs.startDate();
+	return lhs.date_identified() < rhs.date_identified();
 }
 bool compare_priority(const Action & lhs, const Action & rhs)
 {
-	if (lhs.getPriority() == rhs.getPriority()) return false;
-	else if (lhs.getPriority() == priority::High) return false;
-	else if (lhs.getPriority() == priority::Medium) {
-		if (rhs.getPriority() == priority::High) return true;
+	if (lhs.priority() == rhs.priority()) return false;
+	else if (lhs.priority() == Priority::High) return false;
+	else if (lhs.priority() == Priority::Medium) {
+		if (rhs.priority() == Priority::High) return true;
 		else return false;
 	}
 	else return true; //lhs.getPriority() == priority::Low
@@ -90,62 +90,31 @@ bool compare_descriptions(const Action & lhs, const Action & rhs)
 }
 bool compare_status(const Action & lhs, const Action & rhs)
 {
-	auto lhs_status = lhs.actionStatus();
-	auto rhs_status = rhs.actionStatus();
+	auto lhs_status = lhs.status();
+	auto rhs_status = rhs.status();
 
 	if (lhs_status == rhs_status) return false;
-	else if (lhs_status == status::notstarted) return true;
-	else if (lhs_status == status::hold) {
-		if (rhs_status == status::notstarted) return false;
+	else if (lhs_status == Status::notstarted) return true;
+	else if (lhs_status == Status::hold) {
+		if (rhs_status == Status::notstarted) return false;
 		else return true;
 	}
-	else if (lhs_status == status::ongoing) {
-		if (rhs_status == status::notstarted || rhs_status == status::hold)
+	else if (lhs_status == Status::ongoing) {
+		if (rhs_status == Status::notstarted || rhs_status == Status::hold)
 			return false;
 		else return true;
 	}
 	else return false; //lhs_status == status::completed
 }
 
-//Can we generalise it?
-vector<string> get_descriptions(vector<Action>& actions) {
-	vector<string> descriptions;
-	for (const auto& action : actions) {
-		descriptions.push_back(action.description());
-	}
-	return descriptions;
-}
-vector<dates::date> get_due_dates(vector<Action>& actions) {
-	vector<dates::date> dueDates;
-	for (const auto& action : actions) {
-		dueDates.push_back(action.dueDate());
-	}
-	return dueDates;
-}
-vector<dates::date> get_start_dates(vector<Action>& actions){
-	vector<dates::date> startDates;
-	for (const auto& action : actions) {
-		startDates.push_back(action.startDate());
-	}
-	return startDates;
-}
-vector<person> get_owners(vector<Action>& actions) {
-	vector<person> owners;
-	for (const auto& action : actions) {
-		owners.push_back(action.owner());
-	}
-	return owners;
-}
-
 
 Action::Action(string act, dates::date& identified, dates::date& due, person owner):
-	_desc{act}, _identified_date{identified}, _dueDate{due}, _owner{owner}, _today{today()} 
+	_desc{act}, _identified_date{identified}, _dueDate{due}, _owner{owner}, _today{today()}
 {
 	if (_identified_date > _dueDate) 
 		throw invalid_argument("Date action was identified should be earlier than due date.");
 	if (_identified_date > _today)
 		throw invalid_argument("Date action was identified cannot be later than today.");
-
 	_priority = Priority::Medium;
 	_currentStatus = Status::notstarted;
 }
@@ -181,54 +150,58 @@ dates::date Action::date_identified() const
 {
 	return _identified_date;
 }
-shared_ptr<dates::date>Action::date_started() const
+std::optional<dates::date>Action::date_started() const
 {
 	return _startDate;
-
 }
-shared_ptr<dates::date> Action::date_completed() const
+std::optional<dates::date> Action::date_completed() const
 {
 	return _date_completed;
 }
-shared_ptr<dates::date> Action::date_onhold() const
+std::optional<dates::date> Action::date_onhold() const
 {
 	return _on_hold_date;
 }
-void Action::set_status(Status new_status) {
+void Action::set_status(Status new_status, dates::date status_date) {
+	auto previous_status = _currentStatus;
 	if (new_status == Status::notstarted)
 	{
-		_on_hold_date = nullptr;
-		_date_completed = nullptr;
-		_startDate = nullptr;
+		_on_hold_date = std::nullopt;
+		_date_completed = std::nullopt;
+		_startDate = std::nullopt;
 		_currentStatus = new_status;
+		try { this->set_date_identified(status_date); }
+		catch (invalid_argument& e) { _currentStatus = previous_status; throw e; }
 	}
 	else if (new_status == Status::ongoing)
 	{
-		_on_hold_date = nullptr;
-		_date_completed = nullptr;
-		this->set_date_started(today());
 		_currentStatus = new_status;
+		try {this->set_date_started(status_date);}
+		catch (invalid_argument& e) { _currentStatus = previous_status; throw e; }
+		
+		_on_hold_date = std::nullopt;
+		_date_completed = std::nullopt;
 	}
-	if (new_status == Status::hold)
+	else if (new_status == Status::hold)
 	{
-		_date_completed = nullptr;
-		if (_startDate == nullptr)
-			this->set_date_started(today());
-		else
-			this->set_date_onhold(today());
+		if (!_startDate) {
+			throw invalid_argument("Cannot set action to hold before starting the task.");
+		}
 		_currentStatus = new_status;
+		try {this->set_date_onhold(status_date);}
+		catch (invalid_argument& e) { _currentStatus = previous_status; throw e; }
+			
+		_date_completed = std::nullopt;
 	}
-	if (new_status == Status::completed)
-	{
-		_on_hold_date = nullptr;
-		_date_completed = make_shared<dates::date>(today());
+	else if (new_status == Status::completed){
+		if (!_startDate) {
+			throw invalid_argument("Cannot set action to complete before starting the task.");
+		}
 		_currentStatus = new_status;
-	}
-	else
-	{
-		_on_hold_date = nullptr;
-		_date_completed = nullptr;
-		_currentStatus = new_status;
+		try {this->set_date_completed(status_date);}
+		catch (invalid_argument& e) { _currentStatus = previous_status; throw e; }
+
+		_on_hold_date = std::nullopt;
 	}
 }
 void Action::set_priority(Priority new_priority)
@@ -244,58 +217,57 @@ void Action::set_owner(person new_owner)
 	_owner = new_owner;
 }
 void Action::set_date_due(dates::date new_due_date) {
-	if (_dueDate < _identified_date)
+	if (new_due_date < _identified_date)
 		throw invalid_argument("Due date cannot be earlier than identified date.");
 	_dueDate = new_due_date;
 }
 void Action::set_date_identified(dates::date new_date)
 {
-	if (_currentStatus == Status::notstarted)
-	{
-		if (_identified_date > _dueDate)
-			throw invalid_argument("Date action was identified should be earlier than due date.");
-		if (_identified_date > _today)
-			throw invalid_argument("Date action was identified cannot be later than today.");
-		_identified_date = new_date;
-	}
-	if (_currentStatus == Status::ongoing)
-	{
-		if (_identified_date > *_startDate)
-			throw invalid_argument("Date action was idenfitied should be before start date.");
-	}
-	if (_currentStatus == Status::hold)
-	{
-		if (_identified_date > *_startDate)
-			throw invalid_argument("Date action was idenfitied should be before start date.");
-		if (_identified_date > *_on_hold_date)
-			throw invalid_argument("Date action was identified should be before.");
-	}
-	if (_currentStatus == Status::completed)
-	{
-		if (_identified_date > *_startDate)
-			throw invalid_argument("Date action was idenfitied should be before start date.");
-		if (_identified_date > *_date_completed)
-			throw invalid_argument("Date action was identified should be before completed date.");
+	if (new_date > _dueDate)
+		throw invalid_argument("Date action was identified should be earlier than due date.");
+	else if(new_date > _today)
+		throw invalid_argument("Date action was identified cannot be later than today.");
+	
+	switch (_currentStatus) {
+		case (Status::notstarted): break;
+		case (Status::ongoing):
+			if (new_date > _startDate.value()) throw invalid_argument("Date action was idenfitied should be before start date.");
+			break;
+		case (Status::hold):
+			if (new_date > _startDate.value()) throw invalid_argument("Date action was idenfitied should be before start date.");
+			if (new_date > _on_hold_date.value()) throw invalid_argument("Date action was identified should be before.");
+			break;
+		case (Status::completed):
+			if (new_date > _startDate.value()) throw invalid_argument("Date action was idenfitied should be before start date.");
+			if (new_date > _date_completed.value()) throw invalid_argument("Date action was identified should be before completed date.");
+			break;
+		default: {}
 	}
 	_identified_date = new_date;
-}
+	}
 void Action::set_date_started(dates::date new_start_date)
 {
 	if (new_start_date < _identified_date) 
 		throw invalid_argument("Start date cannot be earlier than identified date");
-	if (new_start_date > today())
+	else if (new_start_date > today())
 		throw invalid_argument("Action cannot be started in the future.");
-	if (_currentStatus == Status::completed)
-	{
-		if (new_start_date >= *_date_completed)
-			throw invalid_argument("Action cannot start after completion date.");
+	switch (_currentStatus) {
+			case(Status::notstarted): {
+				throw invalid_argument("Action cannot be started when the action is started.");
+			}
+			case (Status::completed): {
+				if (new_start_date >= _date_completed.value())
+					throw invalid_argument("Action cannot start after completion date.");
+				break;
+			}
+			case (Status::hold): {
+				if (new_start_date >= _on_hold_date.value())
+					throw std::invalid_argument("Action cannot start after on hold date.");
+				break;
+			}
+			default: {}
 	}
-	if (_currentStatus == Status::hold)
-	{
-		if (new_start_date >= *_on_hold_date)
-			throw std::invalid_argument("Action cannot start after on hold date.");
-	}
-	_startDate = make_shared<dates::date>(dates::date{ new_start_date });
+	_startDate = dates::date{ new_start_date };
 }
 void Action::set_date_onhold(dates::date new_date)
 {
@@ -309,8 +281,25 @@ void Action::set_date_onhold(dates::date new_date)
 			throw invalid_argument("Hold date cannot be earlier than identified date");
 		if (new_date > today())
 			throw invalid_argument("Action cannot be put on hold in the future.");
-		if (new_date < *_startDate)
+		if (new_date < _startDate.value())
 			throw invalid_argument("Hold date cannot be earlier than start date.");
-		_on_hold_date = make_shared<dates::date>(dates::date{ new_date });
+		_on_hold_date = dates::date{new_date};
+	}
+}
+void Action::set_date_completed(dates::date new_date)
+{
+	if (_currentStatus != Status::completed)
+	{
+		throw invalid_argument("Cannot set completed date when action status is not complete.");
+	}
+	else
+	{
+		if (new_date < _identified_date)
+			throw invalid_argument("Completed date cannot be earlier than identified date");
+		if (new_date > today())
+			throw invalid_argument("Action cannot be completed in the future.");
+		if (new_date < _startDate.value())
+			throw invalid_argument("Completed date cannot be earlier than start date.");
+		_date_completed = dates::date{new_date};
 	}
 }

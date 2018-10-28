@@ -2,6 +2,7 @@
 #include <string>
 #include "dates.h"
 #include "person.h"
+#include <optional>
 #include "../../DateTime/include/date/date.h"
 #include "../../DateTime/include/date/tz.h"
 enum class Status{notstarted, hold, ongoing, completed};
@@ -12,9 +13,11 @@ class Action {
 	person _owner;
 	Status _currentStatus;
 	Priority _priority;
-	dates::date _dueDate, _today, _identified_date;
-	shared_ptr<dates::date> _on_hold_date{ nullptr }, _date_completed{ nullptr };
-	shared_ptr<dates::date> _startDate{ nullptr };
+	dates::date _dueDate,  _identified_date, _today ;
+	std::optional<dates::date> _on_hold_date{std::nullopt};
+	std::optional<dates::date>	_date_completed{std::nullopt};
+	std::optional<dates::date> _startDate{std::nullopt};
+
 public:
 	Action(string act, dates::date& start_date, dates::date& due_date, person owner);
 	
@@ -42,7 +45,7 @@ public:
 	 * Returns the date action was started.
 	 * If action not started returns nullptr.
 	 */
-	shared_ptr<dates::date>date_started() const;
+	std::optional<dates::date>date_started() const;
 
 	/*
 	 * Changes the date the action was started.
@@ -53,13 +56,13 @@ public:
 	Returns pointer to date when action was marked completed.
 	If action is not completed a nullptr is returned.
 	*/
-	shared_ptr<dates::date> date_completed() const;
+	std::optional<dates::date> date_completed() const;
 	
 	/*
 	 Returns pointer to date when action was put on hold.
 	 If not on hold returns nullptr.
 	 */
-	shared_ptr<dates::date> date_onhold() const;
+	std::optional<dates::date> date_onhold() const;
 
 	void set_date_onhold(dates::date new_date);
 
@@ -73,7 +76,7 @@ public:
 	/*
 	 * Changes the status.
 	 */
-	void set_status(Status new_status);
+	void set_status(Status new_status, dates::date status_date);
 
 	/*
 	 * Returns the action description.
@@ -117,16 +120,11 @@ dates::date today();
 dates::month month_from_int(int mon);
 
 bool compare_due_dates(const Action& lhs, const Action& rhs);
-bool compare_start_dates(const Action& lhs, const Action& rhs);
+bool compare_identified_dates(const Action& lhs, const Action& rhs);
 bool compare_priority(const Action& lhs, const Action& rhs);
 bool compare_owners(const Action&lhs, const Action& rhs);
 bool compare_descriptions(const Action& lhs, const Action& rhs);
 bool compare_status(const Action& lhs, const Action& rhs);
-
-vector<string> get_descriptions(vector<Action>& actions);
-vector<dates::date> get_due_dates(vector<Action>& actions);
-vector<dates::date> get_start_dates(vector<Action>& actions);
-vector<person> get_owners(vector<Action>& actions);
 
 template<typename oper>
 vector<Action> search_action(string search_string,  vector<Action>& actions, oper pred);
@@ -136,7 +134,7 @@ vector<Action> find_actions(vector<Action>, P pred);
 template<typename oper>
 vector<Action> search_action(string search_string, vector<Action>& actions, oper pred) {
 	vector<Action> search_results;
-	for (const Action& action : actions) {
+	for (Action& action : actions) {
 		if (pred(action))
 			search_results.push_back(action);
 	}
@@ -146,7 +144,7 @@ template<typename P>
 vector<Action> find_actions(vector<Action> actions, P pred) 
 {
 	vector<Action> matches;
-	for (auto action : actions) { 
+	for (Action& action : actions) { 
 		if (pred(action)) matches.push_back(action);
 	}
 	return matches;
@@ -197,7 +195,7 @@ public:
 	action_completed(){}
 	bool operator()(const Action& action) const
 	{
-		if (action.actionStatus() == status::completed) return true;
+		if (action.status() == Status::completed) return true;
 		else return false;
 	}
 };
@@ -209,7 +207,7 @@ public:
 	action_on_hold() {}
 	bool operator()(const Action& action) const
 	{
-		if (action.actionStatus() == status::hold) return true;
+		if (action.status() == Status::hold) return true;
 		else return false;
 	}
 };
@@ -221,7 +219,7 @@ public:
 	action_ongoing() {}
 	bool operator()(const Action& action) const
 	{
-		if (action.actionStatus() == status::ongoing) return true;
+		if (action.status() == Status::ongoing) return true;
 		else return false;
 	}
 };
@@ -233,7 +231,7 @@ public:
 	action_not_started() {}
 	bool operator()(const Action& action) const
 	{
-		if (action.actionStatus() == status::notstarted) return true;
+		if (action.status() == Status::notstarted) return true;
 		else return false;
 	}
 };
@@ -246,7 +244,7 @@ public:
 	priority_high() {}
 	bool operator()(const Action& action) const
 	{
-		if (action.getPriority() == priority::High) return true;
+		if (action.priority() == Priority::High) return true;
 		else return false;
 	}
 };
@@ -255,7 +253,7 @@ public:
 	priority_medium() {}
 	bool operator()(const Action& action) const
 	{
-		if (action.getPriority() == priority::Medium) return true;
+		if (action.priority() == Priority::Medium) return true;
 		else return false;
 	}
 };
@@ -264,7 +262,7 @@ public:
 	priority_low() {}
 	bool operator()(const Action& action) const
 	{
-		if (action.getPriority() == priority::Low) return true;
+		if (action.priority() == Priority::Low) return true;
 		else return false;
 	}
 };
